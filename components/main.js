@@ -56,14 +56,14 @@ class PopUpInfo extends HTMLElement {
   
       style.textContent = `
       .btn {
-        background-color: #4c82af; /* Green */
+        background-color: rgba(0, 0, 0, 0.508);
         border: none;
         color: white;
         border-radius: 12 px;
       }
       .btn:hover {
-        background-color: #70aed4ad;
-        color: rgb(54, 48, 159);
+        background-color: rgba(0, 0, 0, 0.09);
+        color: black;
       }
       `;
   

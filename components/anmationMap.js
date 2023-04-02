@@ -45,7 +45,7 @@ class animationMap extends HTMLElement {
         // Create canvas 
         const canvas = document.createElement('canvas');
         canvas.setAttribute('class', 'canvas');
-        canvas.setAttribute('width', '590');
+        canvas.setAttribute('width', '570');
         canvas.setAttribute('height', '490');
 
 

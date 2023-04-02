@@ -16,14 +16,9 @@
 </head>
 
 <body>
-
     <h2 class="title">
         地图制图实习---电子地图
     </h2>
-
-
-
-
     <div class="table">
         <div class="wrapper">
             <div id="container"></div>
@@ -39,7 +34,7 @@
             </div>
 
 
-            <div style="width: 690px; height: 490px;">
+            <div style="width: 570px; height: 500px;">
                 <animation-map></animation-map>
             </div>
             <button>
@@ -48,9 +43,11 @@
             <!-- <div id="OriData"></div>
             </div> -->
     </div>
-    <!-- <animation-map></animation-map> -->
-
     <script src="/components/anmationMap.js" type="module"></script>
+
+    <footer>
+        <p>© 2021 电子地图制图实习</p>
+    </footer>
 </body>
 </html>
 <script>
@@ -110,7 +107,12 @@ function generateHTML(dataString,name) {
   return `
   <div style="height: 350px; width: 600px;">
         <center>
-            <p>`+name+`</p>
+            <p style="
+                font-size: 20px;   
+                font-weight: bold;
+                background-color: rgba(0, 0, 0, 0.508);
+                color: white;"
+            >`+name+`</p>
         </center>
       <popup-info id="w" data=`+dataString+`></popup-info>
   </div>`;
