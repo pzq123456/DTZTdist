@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link
+      href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://d3js.org/d3.v6.js"></script>
+</head>
+<body>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <center>
+        <h2 class="title">冬小麦产量数据</h2>
+        
+    </center>
+    <div id="wrapper" style="height: 100%; width: 100%;"></div>
+    <button>
+        <a href="index.html">地图视图</a>
+    </button>
+    <script>
+
+        d3.csv("yield.csv").then(function(data) {
+            // convert data to array
+            let conumn = Object.keys(data[0]);
+            let rows = [];
+            for (let i = 0; i < data.length; i++) {
+                let row = [];
+                for (let j = 0; j < conumn.length; j++) {
+                    row.push(data[i][conumn[j]]);
+                }
+                rows.push(row);
+            }
+
+            // move the last four columns to the front
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                let temp = row.slice(row.length - 4);
+                row.splice(row.length - 4, 4);
+                row.unshift(...temp);
+            }
+            // move the last four elements in the column array to the front
+            let temp = conumn.slice(conumn.length - 4);
+            conumn.splice(conumn.length - 4, 4);
+            conumn.unshift(...temp);
+            
+            console.log(rows);
+            console.log(conumn);
+            new gridjs.Grid({
+                columns: conumn,
+                data: rows,
+                sort: true,
+                search: true,
+                pagination: {
+                    enabled: true,
+                    limit: 15,
+                },
+            }).render(document.getElementById("wrapper"));
+        });
+    </script>
+    
+</body>
+<style>
+    .title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.508);
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    font-weight: bold;
+    }
+    button{
+        position: absolute;
+        width: 100%;
+        height: 30px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.508);
+        color: rgb(255, 255, 255);
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 12px;
+    }
+    /* honver */
+    button:hover{
+        background-color: rgb(255, 255, 255);
+        color: rgb(44, 27, 112);
+    }
+    a{
+        color: rgb(255, 255, 255);
+    }
+    a:hover{
+        color: rgb(18, 17, 17);
+    }
+</style>
+</html>

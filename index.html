@@ -1,0 +1,243 @@
+<!-- zsuRD8fmHkCdmWzC84NDbsvwAiWBdCce -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>电子地图</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="/components/main.js" type="module"></script>
+    <script src="/components/Yield.js" type="module"></script>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=zsuRD8fmHkCdmWzC84NDbsvwAiWBdCce"></script>
+    <script src="https://unpkg.com/d3-array@1"></script>
+    <script src="https://unpkg.com/d3-geo@1"></script>
+    <script src="https://unpkg.com/d3-geo-projection@2"></script>
+    <script src="https://unpkg.com/shapefile@0.6"></script>
+</head>
+
+<body>
+
+    <h2 class="title">
+        地图制图实习---电子地图
+    </h2>
+
+
+
+
+    <div class="table">
+        <div class="wrapper">
+            <div id="container"></div>
+        </div>
+        <div class="data">
+            <div style="height: 300px; width: 550px;">
+            <yield-info 
+            data="[6.324077729,6.469937242,6.615796755,6.761656267,6.90751578,7.053375293,5.946300571,6.075002944,6.110244193,7.127886541]"
+            labels="[2005,2006,2007,2008,2009,2010,2011,2012,2013,2014]"
+            name="鹿泉市"
+            id="y"
+            ></yield-info>
+            </div>
+
+
+            <div style="width: 690px; height: 490px;">
+                <animation-map></animation-map>
+            </div>
+            <button>
+                <a href="table.html">表格视图</a>
+            </button>
+            <!-- <div id="OriData"></div>
+            </div> -->
+    </div>
+    <!-- <animation-map></animation-map> -->
+
+    <script src="/components/anmationMap.js" type="module"></script>
+</body>
+</html>
+<script>
+const labels = "[2005,2006,2007,2008,2009,2010,2011,2012,2013,2014]";
+// get "location.xlsx" and add markers
+d3.csv("yield.csv").then(function(data) {
+    // console.log(data);
+    var map = new BMapGL.Map('container');
+    map.centerAndZoom(new BMapGL.Point(116.404, 39.915), 7);
+    map.enableScrollWheelZoom(true);
+
+    let markerList = [];
+    for (let i = 0; i < data.length; i++) {
+        let county_ID = data[i].ID;
+        let county_name = data[i].County;
+        let county_longitude = data[i].lon;
+        let county_latitude = data[i].lat;
+        var marker = new BMapGL.Marker(new BMapGL.Point(county_longitude, county_latitude));
+        map.addOverlay(marker);
+        markerList.push(marker);
+    }
+    
+    // add click event for each marker
+    for (let i = 0; i < markerList.length; i++) {
+        markerList[i].addEventListener('click', function () {
+            let county_ID = data[i].ID;
+            let county_name = data[i].County;
+            var url=generateURL(county_ID);
+
+            // get data from csv file: 2005,2006,2007,2008,2009,2010,2011,2012,2013,2014 
+            // and put them into Array
+            let yieldList = [];
+            for (let j = 0; j < 10; j++) {
+                let yield = data[i][2005+j];
+                yieldList.push(yield);
+            }
+
+            // convert data to string
+            let yieldString = data_string(yieldList);
+            writeYieldInfoElement(county_name,labels,yieldString);
+
+            d3.csv(url).then(function(data) {
+                data = convertData(data);
+                let dataString = JSON.stringify(data);
+
+                let htmlString = generateHTML(dataString,county_name);
+                var infoWindow = new BMapGL.InfoWindow(htmlString);
+                markerList[i].openInfoWindow(infoWindow);
+                
+            });
+        });
+    }
+});
+
+// html element string generate function . input datastring
+function generateHTML(dataString,name) {
+  return `
+  <div style="height: 350px; width: 600px;">
+        <center>
+            <p>`+name+`</p>
+        </center>
+      <popup-info id="w" data=`+dataString+`></popup-info>
+  </div>`;
+}
+// data is a list with shape [{m0:1.0, m1:2.0, m2:3.0 ,...,m119:120.0},
+// {m0:1.0, m1:2.0, m2:3.0 ,...m119:120.0}},
+// {m0:1.0, m1:2.0, m2:3.0 ,...m119:120.0}},
+// {m0:1.0, m1:2.0, m2:3.0 ,...m119:120.0}},]
+// convert it to nums array with shape of [4,120]
+function convertData(data) {
+  let nums = [];
+  for (let i = 0; i < data.length; i++) {
+      let row = [];
+      for (let j = 0; j < 120; j++) {
+          row.push(data[i]['m' + j]);
+      }
+      nums.push(row);
+  }
+  return nums;
+}
+// generate the URL for the csv file in range(120)
+function generateURL(i) {
+  // return "http://"+window.location.host+"/shss"+"/dataset2/"+i+".csv";
+  return "http://"+window.location.host+"/dataset2/"+i+".csv";
+}
+
+//
+function data_string(yield_data){
+        let data_string="[";
+        a=[]
+        for(let i=0;i<yield_data.length-1;i++){
+            data_string+=yield_data[i]+",";
+        }
+        data_string+=yield_data[9]+"]"
+        return data_string;
+    }
+    // generate the yield-info element in string format
+    function generateYieldInfoElement(name, labels, data) {
+        // return `<yield-info name="${name}" labels="${labels}" data="${data} id="y"></yield-info>`;
+        return `<yield-info name="${name}" labels="${labels}" data="${data}" id = "y" ></yield-info>`;
+    }
+
+    /**
+     * write the yield-info element to the html
+     * @param {string} name
+     * @param {string} labels
+     * @param {string} data
+     */        
+    function writeYieldInfoElement(name, labels, data) {
+        var element=document.getElementById("y");
+        if(element){
+            element.parentNode.insertAdjacentHTML('beforeend', generateYieldInfoElement(name, labels, data));
+            element.parentNode.removeChild(element);
+        }
+    }
+</script>
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(249, 249, 249);
+    }
+    #container {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    .title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.508);
+        color: rgb(255, 255, 255);
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .table {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: 875px;
+        background-color: rgb(255, 255, 255);
+    }
+    .wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 70%;
+        height: 100%;
+        background-color: rgb(44, 27, 112);
+    }
+    .data {
+        position: absolute;
+        top: 0;
+        left: 70%;
+        width: 30%;
+        height: 100%;
+    }
+    button{
+        position: absolute;
+        width: 100%;
+        height: 30px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.508);
+        color: rgb(255, 255, 255);
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 12px;
+        margin-top: 40px;
+    }
+    /* honver */
+    button:hover{
+        background-color: rgb(255, 255, 255);
+        color: rgb(44, 27, 112);
+    }
+    a{
+        color: rgb(255, 255, 255);
+    }
+    a:hover{
+        color: rgb(18, 17, 17);
+    }
+</style>
