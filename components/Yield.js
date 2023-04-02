@@ -49,8 +49,8 @@ function setupChart(canvas, data, labels, name) {
                   display: true,
                   text: name+'-冬小麦年产量',
                     font: {
-                        size: 10
-                    }
+                        size: 20
+                    },
                 }
             },
             scales: {
@@ -73,7 +73,7 @@ function setupChart(canvas, data, labels, name) {
                     display: true,
                     text: '产量： 吨/公顷',
                     font: {
-                        size: 15,
+                        size: 10,
                         style: 'normal',
                         lineHeight: 1.2
                     },
