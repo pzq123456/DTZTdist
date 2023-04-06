@@ -1,5 +1,5 @@
 import 'https://cdn.jsdelivr.net/npm/chart.js';
-
+// "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.1/chart.js" 
 // Create a class for the element
 class Yield extends HTMLElement {
     constructor() {
