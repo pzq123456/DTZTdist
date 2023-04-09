@@ -56,7 +56,7 @@ class animationMap extends HTMLElement {
             display: flex;
             flex-direction: row;
             height: 30px;
-            background-color: rgba(61, 59, 59, 0.508);
+            background-color: rgb(235, 235, 235);
         }
         `;
 
