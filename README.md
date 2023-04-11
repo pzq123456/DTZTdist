@@ -1,5 +1,5 @@
 # 制图说明书
-> 潘志清 地信20-2 202001020717 4.11 10:23
+
 > 项目地址：
 > * 数据处理：https://github.com/pzq123456/DTZT
 > * 电子地图部分：https://github.com/pzq123456/DTZTdist
